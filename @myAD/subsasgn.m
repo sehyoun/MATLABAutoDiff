@@ -1,4 +1,9 @@
 function y = subsasgn(y, S, x)
+% Edited by SeHyoun Ahn, Jan 2016
+% In Package myAD - Automatic Differentiation
+% by Martin Fink, May 2007
+% martinfink 'at' gmx.at
+
 %% No Subsetting %%
 if  isempty(S.subs{1})
     return;

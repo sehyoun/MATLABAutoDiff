@@ -1,19 +1,68 @@
-function z = max(varargin)
+function varargout = max(x,varargin)
+% Edited by SeHyoun Ahn, Jan 2016
+
 % In Package myAD - Automatic Differentiation
 % by Martin Fink, June 2006
 % martinfink 'at' gmx.at
-
-    if nargout > 1
-        error('Only one output for max implemented');
-    end
-
-    if nargin > 1
-        x = max(varargin{1}.values, varargin{2}.values);
-        idx = (x == varargin{2}.values) + 1;
-        z = varargin{idx};
+if nargin > 2
+    if isa(varargin{2},'double')
+        direction = varargin{2};
+        if direction == 1
+            z=x;
+            [n,m]=size(x.values);
+            [z.values,idx]=max(x.values,varargin{:});
+            z.derivatives = x.derivatives(n*(0:(m-1))+idx,:);
+            varargout{2} = idx;
+        else
+            z=x;
+            [n,~]=size(x.values);
+            [z.values,idx]=max(x.values,varargin{:});
+            disp((idx-1)*n+(1:n)');
+            z.derivatives = x.derivatives((idx-1)*n+(1:n)',:);
+            varargout{2} = idx;
+        end
     else
-        [x, idx] = max(varargin{1}.values);
-        z = varargin{1};
-        z.values = z.values(idx);
-        z.derivatives = z.derivatives(idx,:);
+        if isa(varargin{1},'myAD')
+            idx = x.values<varargin{1}.values;
+            z=x;
+            z.values = x.values.*(1-idx)+idx.*varargin{1}.values;
+            z.derivatives(idx(:),:) = varargin{1}.derivatives(idx(:),:);
+            warning('There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.');
+        else
+            if isempty(varargin{1})
+                z=x;
+                [n,m]=size(x.values);
+                [z.values,idx]=max(x.values,varargin{:});
+                z.derivatives = x.derivatives(n*(0:(m-1))+idx,:);
+                varargout{2} = idx;
+            else
+                idx = x.values<varargin{1};
+                z=x;
+                z.values = x.values.*(1-idx)+idx.*varargin{1};
+                z.derivatives(idx(:),:) = 0;
+                warning('There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.');
+            end
+        end
     end
+elseif nargin==2
+    if isa(varargin{1},'myAD')
+        idx = x.values<varargin{1}.values;
+        z=x;
+        z.values = x.values.*(1-idx)+idx.*varargin{1}.values;
+        z.derivatives(idx(:),:) = varargin{1}.derivatives(idx(:),:);
+        warning('There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.');
+    else
+        idx = x.values<varargin{1};
+        z=x;
+        z.values = x.values.*(1-idx)+idx.*varargin{1};
+        z.derivatives(idx(:),:) = 0;
+        warning('There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.');
+    end
+else
+    z=x;
+    [n,m]=size(x.values);
+    [z.values,idx]=max(x.values,varargin{:});
+    z.derivatives = x.derivatives(n*(0:(m-1))+idx,:);
+    varargout{2} = idx;
+end
+varargout{1} = z;

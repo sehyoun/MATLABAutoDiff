@@ -1,60 +1,77 @@
 function x = mtimes(x, y)
-
-%% MATRIX MULTIPLICATION %%
+% by SeHyoun Ahn, Jan 2016
+% Note that in the original package by Martin Fink, this redirected to element-wise multiplication
 if isa(x,'myAD')
     [n,m]=size(x.values);
-    l=size(x.derivatives,2);
     if isa(y,'myAD')
-        if m>1 && length(y)==m
-            locs=reshape(1:n*m,n,m)';
-            x.derivatives=x.derivatives(locs,:);
-            x.derivatives=x.derivatives.*repmat(y.values,n,l)+repmat(y.derivatives,n,1).*repmat(reshape(x.values',n*m,1),1,l);
-            x.derivatives=reshape(sum(reshape(x.derivatives,n,m*l)),n,l);
-            x.values=x.values*y.values;
+        if m>1 && size(y,1)==m
+            if size(y,2)>1
+                z=x;
+                for j=1:size(y,2)
+                    z.derivatives((j-1)*n+(1:n),:)=sparse(x.values)*y.derivatives((j-1)*m+(1:m),:) + matdrivXvecval(x.derivatives,y.values(:,j));
+                end
+                z.values=x.values*y.values;
+                x=z;
+            else
+                x.derivatives = sparse(x.values)*y.derivatives + matdrivXvecval(x.derivatives,y.values);
+                x.values=x.values*y.values;
+            end
         elseif max(m,n)==1
-            x.derivatives=repmat(x.derivatives,numel(y.values),1).*repmat(y.values(:),1,l)+y.derivatives*x.values;
+            x.derivatives= bsxfun(@times,x.derivatives, y.values(:))+y.derivatives*x.values;
             x.values=x.values*y.values;
         elseif numel(y.values)==1
-            x.derivatives=x.derivatives*y.values+repmat(x.values,1,l).*repmat(y.derivatives,n*m,1);
+            x.derivatives=x.derivatives*y.values+bsxfun(@times,x.values(:),y.derivatives);
             x.values=x.values*y.values;
         else
-            error('This form of multiplication not supported');
+            error('Check that the dimensions match');
         end
     else
-        if m>1 && length(y)==m
-            locs=reshape(1:n*m,n,m)';
-            x.derivatives=x.derivatives(locs,:)';
-            x.derivatives=x.derivatives.*repmat(y,n,l);
-            x.derivatives=reshape(sum(reshape(x.derivatives,n,m*l)),n,l);
-            x.values=x.values*y;
+        if m>1 && size(y,1)==m
+            if size(y,2)>1
+                z=x;
+                for j=1:size(y,2)
+                    z.derivatives((j-1)*n+(1:n),:)=matdrivXvecval(x.derivatives,y(:,j));
+                end
+                z.values=x.values*y;
+                x=z;
+            else
+                x.derivatives = matdrivXvecval(x.derivatives,y);
+                x.values=x.values*y;
+            end
         elseif max(m,n)==1
-            x.derivatives=repmat(x.derivatives,numel(y),1).*repmat(y(:),1,l);
+            x.derivatives= bsxfun(@times,x.derivatives, y(:));
             x.values=x.values*y;
         elseif numel(y)==1
             x.derivatives=x.derivatives*y;
             x.values=x.values*y;
         else
-            error('This form of multiplication not supported');
+            error('Check that the dimensions match');
         end
     end
 else
-    n=size(x,1);
-    m=size(x,2);
-    l=size(y.derivatives,2);
-    if m>1 && length(y)==m
-        y.derivatives=repmat(y.derivatives,n,1).*repmat(reshape(x',n*m,1),1,l);
-        y.derivatives=reshape(sum(reshape(y.derivatives,n,m*l)),n,l);
-        y.values=x*y.values;
-        x=y;
+    [n,m]=size(x);
+    if m>1 && size(y,1)==m
+        if size(y,2)>1
+            z=y;
+            for j=1:size(y,2)
+                z.derivatives((j-1)*n+(1:n),:)=sparse(x)*y.derivatives((j-1)*m+(1:m),:);
+            end
+            z.values=x*y.values;
+            x=z;
+        else
+            y.derivatives = sparse(x)*y.derivatives;
+            y.values=x*y.values;
+            x=y;
+        end
     elseif max(m,n)==1
         y.derivatives=y.derivatives*x;
         y.values=x*y.values;
         x=y;
     elseif numel(y.values)==1
-        y.derivatives=repmat(x,1,l).*repmat(y.derivatives,n*m,1);
+        y.derivatives=bsxfun(@times,x(:),y.derivatives);
         y.values=x*y.values;
         x=y;
     else
-        error('This form of multiplication not supported');
+        error('Check that the dimensions match');
     end
 end

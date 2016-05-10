@@ -1,9 +1,13 @@
 function x = vertcat(varargin)
-y = []; i = 1;
+% Edited by SeHyoun Ahn, Jan 2016
+% In Package myAD - Automatic Differentiation
+% by Martin Fink, May 2007
+% martinfink 'at' gmx.at
+i = 1;
 while (~isa(varargin{i}, 'myAD'))
-    y = [y; varargin{i}];
     i=i+1;
 end
+y=vertcat(varargin{1:i-1});
 n=size(y,1);
 x = varargin{i};
 l=size(x.derivatives,2);
@@ -23,7 +27,8 @@ for j = i+1:nargin
         n=n+nvar;
         x.derivatives = [x.derivatives; reshape(varargin{j}.derivatives,nvar,m*l)];
     else
-        x.values = [x.values, varargin{j}];
+	n=n+size(varargin{j},1);
+        x.values = [x.values; varargin{j}];
         x.derivatives(end+size(varargin{j},1),:) = 0;
     end
 end

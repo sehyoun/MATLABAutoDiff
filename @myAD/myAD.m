@@ -1,6 +1,7 @@
 function x = myAD(x, varargin)
+% Modified Package by SeHyoun Ahn Copyright (C) 2015 (SeHyoun Ahn) based on
 % /*
-%  * myAD and myA2D - Automatic Differentiation of 1st and 2nd Derivative
+%  * myAD and myA2D - Automatic Differentiation of 1st
 %  * Copyright (C) 2006 Martin Fink. (martinfink "at" gmx.at)
 %  *
 %  * This library is free software; you can redistribute it and/or
@@ -18,6 +19,7 @@ function x = myAD(x, varargin)
 %  * http://www.gnu.org/licenses/gpl.html or write to the Free Software
 %  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 %  */
+% License. This is released with GPL 2.1.
 
 if (isa(x, 'myAD'))
     return;

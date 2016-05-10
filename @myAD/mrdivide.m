@@ -1,16 +1,9 @@
 function x = mrdivide(x,y)
-% In Package myAD - Automatic Differentiation
-% by Martin Fink, May 2007
-% martinfink 'at' gmx.at
-
-%%
-if isa(y,'myAD')
-    error('I will code this later');
+% by SeHyoun Ahn, Jan 2016
+if max(size(y))==1
+    x=rdivide(x,y);
+elseif size(x,2)==size(y,2)
+    x=ctranspose(mldivide(ctranspose(y),ctranspose(x)));
 else
-    if numel(y)==1
-        x.derivatives=x.derivatives/y;
-        x.values=x.values/y;
-    else
-        error('Sorry, I have not implemented this yet');
-    end
+    error('Check that the dimensions match');
 end

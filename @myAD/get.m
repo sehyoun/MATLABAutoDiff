@@ -2,9 +2,8 @@ function varargout = get(x, varargin)
 % In Package myAD - Automatic Differentiation
 % by Martin Fink, June 2006
 % martinfink 'at' gmx.at
-
 if nargin <2
-    varargout = [];
+    varargout = {};
     display(x, inputname(1));
     return;
 end

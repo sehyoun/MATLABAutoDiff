@@ -1,10 +1,10 @@
 function x = horzcat(varargin)
-
-y = []; i = 1;
+% by SeHyoun Ahn, Jan 2016
+i = 1;
 while (~isa(varargin{i}, 'myAD'))
-    y = [y, varargin{i}];
     i=i+1;
 end
+y=horzcat(varargin{1:i-1});
 
 x = varargin{i};
 if (i>1)
