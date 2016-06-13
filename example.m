@@ -21,6 +21,9 @@ disp(full(getderivs(f)));
 % f = [ y y z ] * [ y ] = [ xy+y^2+z^2 ]
 %     [ 0 z z ]   [ z ]   [ yz+z^2     ]
 % evaluated at (x,y,z)=(1,2,3)
+%
+% If you plan to use matrix multiplication in high dimensions,
+% refer to the documentation to compile c-files for speed gains
 
 v=myAD([1:3]');
 A=spdiags(v,0,3,3)+spdiags(v(2:3),-1,3,3)+spdiags(v,1,3,3);
