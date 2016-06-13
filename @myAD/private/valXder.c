@@ -1,5 +1,5 @@
-/* This fuMatrix is saved in column-major order.
- * Instead of sorting Ir array after computation, I believe up a supplement
+/* The matrix is saved in the column-major order.
+ * Instead of sorting Ir array after computation, I build up a supplementary
  * array, and rearrange Ir array with one pass O(nrow), but this involves
  * allocating an array of size nrow. This should be fast if (A_deriv*b_val)
  * is not too sparse, but if it is really sparse, it might be faster to

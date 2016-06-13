@@ -1,5 +1,5 @@
-/* This fuMatrix is saved in column-major order.
- * Instead of sorting Ir array after computation, I believe up a supplement
+/* This matrix is saved in column-major order.
+ * Instead of sorting Ir array after computation, I build up a supplementary
  * array, and rearrange Ir array with one pass O(nrow), but this involves
  * allocating an array of size nrow. This should be fast if (A_deriv*b_val)
  * is not too sparse, but if it is really sparse, it might be faster to
@@ -124,14 +124,12 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
                     pointed = pointer[k%nrow];
                     if (pointed != -1) {
                         srA[pointed] += prA[i] * prV[pos[tmp]];
-                        mexPrintf("%f\n",srA[pointed]);
                     }
                     else {
                         pointer[k%nrow] = counter+rownnz;
                         srA[counter+rownnz] = prA[i] * prV[pos[tmp]];
                         lirs[counter+rownnz]= k%nrow;
                         ++rownnz;
-                        mexPrintf("%f\n",srA[counter+rownnz-1]);
                     }
                 }
             }
@@ -148,12 +146,10 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
                     lirs[pointed]=tmpind;
                     pointer[tmpind]=pointed;
                     ++counter;
-                    mexPrintf("%d\n",counter);
                 }
             }
         }
         ljcs[nderiv]=counter;
-        mexPrintf("%d here\n",counter);
     
         mxRealloc(lirs, counter * sizeof(*lirs));
         mxRealloc(srA, counter * sizeof(*srA));
