@@ -1,5 +1,6 @@
 function x=repmat(x,varargin)
-[n,m]=size(x.values);
-p=reshape(repmat(reshape(1:n*m,n,m),varargin{1},varargin{2}),n*m*varargin{1}*varargin{2},1);
-x.derivatives=x.derivatives(p,:);
-x.values=repmat(x.values,varargin{1},varargin{2});
+% by SeHyoun Ahn, Jan 2016
+aux=size(x.values);
+p=repmat(reshape(1:prod(aux),aux),varargin{:});
+x.derivatives=x.derivatives(p(:),:);
+x.values=repmat(x.values,varargin{:});

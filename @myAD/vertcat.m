@@ -1,35 +1,41 @@
 function x = vertcat(varargin)
-% Edited by SeHyoun Ahn, Jan 2016
-% In Package myAD - Automatic Differentiation
-% by Martin Fink, May 2007
-% martinfink 'at' gmx.at
+% by SeHyoun Ahn, Jan 2016
+
 i = 1;
 while (~isa(varargin{i}, 'myAD'))
     i=i+1;
 end
 y=vertcat(varargin{1:i-1});
-n=size(y,1);
+
 x = varargin{i};
-l=size(x.derivatives,2);
-[nx,m]=size(x.values);
 if (i>1)
+    aux = size(y);
+    n = numel(y);
+    locs = reshape(1:n,aux);
     x.values = [y; x.values];
-    x.derivatives = [sparse(n,m*l); reshape(x.derivatives,nx,m*l)];
+    aux = size(x.values);
+    x.derivatives = [sparse(n, size(x.derivatives,2)); x.derivatives];
+    locs = [locs; n+reshape(1:prod(aux),aux)];
+    n = n+prod(aux);
 else
-    x.derivatives = reshape(x.derivatives,nx,m*l);
+    aux = size(x.values);
+    locs = reshape(1:prod(aux),aux);
+    n = prod(aux);
 end
-n=nx+n;
 
 for j = i+1:nargin
     if isa(varargin{j}, 'myAD')
         x.values = [x.values; varargin{j}.values];
-        nvar=size(varargin{j}.values,1);
-        n=n+nvar;
-        x.derivatives = [x.derivatives; reshape(varargin{j}.derivatives,nvar,m*l)];
-    else
-	n=n+size(varargin{j},1);
+        x.derivatives = [x.derivatives; varargin{j}.derivatives];
+        aux = size(varargin{j}.values);
+        locs = [locs; n+reshape(1:prod(aux),aux)];
+        n = n+prod(aux);
+    elseif (~isempty(varargin{j}))
         x.values = [x.values; varargin{j}];
-        x.derivatives(end+size(varargin{j},1),:) = 0;
+        x.derivatives(end+numel(varargin{j}),end) = 0;
+        aux = size(varargin{j});
+        locs = [locs; n+reshape(1:prod(aux),aux)];
+        n = n+prod(aux);
     end
 end
-x.derivatives=reshape(x.derivatives,n*m,l);
+x.derivatives = x.derivatives(locs(:),:);
