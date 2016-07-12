@@ -29,6 +29,11 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
     ljcs    = mxMalloc( (nderiv+1) * sizeof(*ljcs));
     srA     = mxMalloc( nnz * sizeof(*srA));
     
+    if (mxIsLogical(prhs[1])) {
+        mxArray *arg;
+        arg = mxCreateString("AutoDiff does not support matrix-(indicator-valued vector) multiplication. Use Subsetting instead of multiplication.");
+        mexCallMATLAB(0,0,1,&arg,"error");
+    }
     /* Read in Vector V */
     mwSize ncol,counter=0,nrow;
     mwIndex *pointer, rownnz, pointed,tmpind;
