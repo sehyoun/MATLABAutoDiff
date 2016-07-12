@@ -17,10 +17,10 @@ if isa(x,'myAD')
                 x.values=x.values*y.values;
             end
         elseif max(m,n)==1
-            x.derivatives= bsxfun(@times,x.derivatives, y.values(:))+y.derivatives*x.values;
+            x.derivatives= valXder(y.values(:),x.derivatives)+y.derivatives*x.values;
             x.values=x.values*y.values;
         elseif numel(y.values)==1
-            x.derivatives=x.derivatives*y.values+bsxfun(@times,x.values(:),y.derivatives);
+            x.derivatives=x.derivatives*y.values+valXder(x.values(:),y.derivatives);
             x.values=x.values*y.values;
         else
             error('Check that the dimensions match');
@@ -39,7 +39,7 @@ if isa(x,'myAD')
                 x.values=x.values*y;
             end
         elseif max(m,n)==1
-            x.derivatives= bsxfun(@times,x.derivatives, y(:));
+            x.derivatives= valXder(y(:),x.derivatives);
             x.values=x.values*y;
         elseif numel(y)==1
             x.derivatives=x.derivatives*y;
@@ -68,7 +68,7 @@ else
         y.values=x*y.values;
         x=y;
     elseif numel(y.values)==1
-        y.derivatives=bsxfun(@times,x(:),y.derivatives);
+        y.derivatives=valXder(x(:),y.derivatives);
         y.values=x*y.values;
         x=y;
     else

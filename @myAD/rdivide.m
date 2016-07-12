@@ -7,9 +7,9 @@ function x = rdivide(x,y)
 if isa(x, 'myAD')
     if isa(y, 'myAD')
         if numel(y.values)==1
-            x.derivatives = x.derivatives/y.values - bsxfun(@times,x.values(:)/y.values^2,y.derivatives);
+            x.derivatives = x.derivatives/y.values - valXder(x.values(:)/y.values^2,y.derivatives);
         elseif numel(x.values)==1
-            x.dervatives = bsxfun(@rdivide,x.derivatives,y.values(:)) - valXder(x.values./y.values(:).^2,y.derivatives);
+            x.dervatives = valXder(1./y.values(:),x.derivatives) - valXder(x.values./y.values(:).^2,y.derivatives);
         else
             x.derivatives = valXder(1./y.values(:), x.derivatives) - valXder(x.values(:)./y.values(:).^2, y.derivatives);
         end
@@ -18,7 +18,7 @@ if isa(x, 'myAD')
         if max(size(y))==1
             x.derivatives = x.derivatives/y;
         elseif max(size(x.values))==1
-            x.derivatives = bsxfun(@rdivide,x.derivatives,y(:));
+            x.derivatives = valXder(1./y(:),x.derivatives);
         else
             x.derivatives = valXder(1./y(:), x.derivatives);
         end
@@ -26,7 +26,7 @@ if isa(x, 'myAD')
     end
 else
     if max(size(y.values))==1
-        y.derivatives = bsxfun(@times, -x(:)/y.values^2,y.derivatives);
+        y.derivatives = valXder(-x(:)/y.values^2,y.derivatives);
     elseif max(size(x))==1
         y.derivatives = valXder(-x./y.values(:).^2,y.derivatives);
     else

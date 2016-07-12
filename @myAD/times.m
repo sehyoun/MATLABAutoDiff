@@ -7,30 +7,30 @@ function x = times(x,y)
 if isa(x, 'myAD')
     if isa(y, 'myAD')
         if max(size(y.values))==1
-            x.derivatives = y.values.*x.derivatives + bsxfun(@times,x.values(:),y.derivatives);
+            x.derivatives = y.values.*x.derivatives + valXder(x.values(:),y.derivatives);
         elseif max(size(x.values))==1
-            x.derivatives = bsxfun(@times,y.values(:),x.derivatives) + x.values.*y.derivatives;
+            x.derivatives = valXder(y.values(:),x.derivatives) + x.values.*y.derivatives;
         else
-            x.derivatives = bsxfun(@times,y.values(:),x.derivatives) + bsxfun(@times,x.values(:),y.derivatives);
+            x.derivatives = valXder(y.values(:),x.derivatives) + valXder(x.values(:),y.derivatives);
         end
         x.values = x.values.*y.values;
     else
         if max(size(y))==1
             x.derivatives = y*x.derivatives;
         elseif max(size(x.values))==1
-            x.derivatives = bsxfun(@times, y(:), x.derivatives);
+            x.derivatives = valXder(y(:), x.derivatives);
         else
-            x.derivatives = bsxfun(@times,y(:),x.derivatives);
+            x.derivatives = valXder(y(:),x.derivatives);
         end
         x.values = x.values.*y;
     end
 else
     if max(size(y.values))==1
-        y.derivatives = bsxfun(@times,x(:),y.derivatives);
+        y.derivatives = valXder(x(:),y.derivatives);
     elseif max(size(x))==1
         y.derivatives = x.*y.derivatives;
     else
-        y.derivatives = bsxfun(@times,x(:),y.derivatives);
+        y.derivatives = valXder(x(:),y.derivatives);
     end
     y.values = x.*y.values;
     x = y;
