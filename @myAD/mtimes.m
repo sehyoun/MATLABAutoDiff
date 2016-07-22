@@ -6,11 +6,10 @@ if isa(x,'myAD')
     if isa(y,'myAD')
         if m>1 && size(y,1)==m
             if size(y,2)>1
-                z=x;
+                z = myAD(x.values*y.values,sparse(n*size(y,2),size(x.derivatives,2)));
                 for j=1:size(y,2)
                     z.derivatives((j-1)*n+(1:n),:)=sparse(x.values)*y.derivatives((j-1)*m+(1:m),:) + matdrivXvecval(x.derivatives,y.values(:,j));
                 end
-                z.values=x.values*y.values;
                 x=z;
             else
                 x.derivatives = sparse(x.values)*y.derivatives + matdrivXvecval(x.derivatives,y.values);
@@ -28,11 +27,10 @@ if isa(x,'myAD')
     else
         if m>1 && size(y,1)==m
             if size(y,2)>1
-                z=x;
+                z = myAD(x.values*y,sparse(n*size(y,2),size(x.derivatives,2)));
                 for j=1:size(y,2)
                     z.derivatives((j-1)*n+(1:n),:)=matdrivXvecval(x.derivatives,y(:,j));
                 end
-                z.values=x.values*y;
                 x=z;
             else
                 x.derivatives = matdrivXvecval(x.derivatives,y);
@@ -52,11 +50,10 @@ else
     [n,m]=size(x);
     if m>1 && size(y,1)==m
         if size(y,2)>1
-            z=y;
+            z = myAD(x*y.values,sparse(n*size(y,2),size(y.derivatives,2)));
             for j=1:size(y,2)
                 z.derivatives((j-1)*n+(1:n),:)=sparse(x)*y.derivatives((j-1)*m+(1:m),:);
             end
-            z.values=x*y.values;
             x=z;
         else
             y.derivatives = sparse(x)*y.derivatives;
