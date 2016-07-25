@@ -168,7 +168,9 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
     
     /* Set Output */
     plhs[0] = mxCreateSparse(nrow,nderiv,counter,mxREAL);
-    mxSetIr(plhs[0],lirs);
-    mxSetJc(plhs[0],ljcs);
-    mxSetPr(plhs[0],srA);
+    if (counter > 0) {
+        mxSetIr(plhs[0],lirs);
+        mxSetJc(plhs[0],ljcs);
+        mxSetPr(plhs[0],srA);
+    }
 }
