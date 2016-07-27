@@ -15,10 +15,10 @@ nrow = varargin{2};
 ncol = varargin{3};
 x.values=spdiags(x.values,offset,nrow,ncol);
 l=size(x.derivatives,2);
-tmp=sparse(nrow*ncol,l);
-if varargin{1}<0
-    tmp(1-offset:nrow+1:nrow*(ncol+offset),:)=x.derivatives(1:nrow+offset,:);
+if offset<0
+    [i,j,v] = find(x.derivatives(1:min((nrow+offset),ncol),:));
+    x.derivatives = sparse((1-offset)+(nrow+1)*(i-1),j,v,nrow*ncol,l);
 else
-    tmp(offset*nrow+1:nrow+1:nrow*ncol-offset,:)=x.derivatives(offset+1:nrow,:);
+    [i,j,v] = find(x.derivatives((offset+1):nrow,:));
+    x.derivatives = sparse((offset*nrow)+1+(nrow+1)*(i-1),j,v,nrow*ncol,l);
 end
-x.derivatives=tmp;
