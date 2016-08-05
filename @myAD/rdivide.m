@@ -9,7 +9,7 @@ if isa(x, 'myAD')
         if numel(y.values)==1
             x.derivatives = x.derivatives/y.values - valXder(x.values(:)/y.values^2,y.derivatives);
         elseif numel(x.values)==1
-            x.dervatives = valXder(1./y.values(:),x.derivatives) - valXder(x.values./y.values(:).^2,y.derivatives);
+            x.derivatives = valXder(1./y.values(:),x.derivatives) - valXder(x.values./y.values(:).^2,y.derivatives);
         else
             x.derivatives = valXder(1./y.values(:), x.derivatives) - valXder(x.values(:)./y.values(:).^2, y.derivatives);
         end
