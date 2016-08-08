@@ -26,7 +26,7 @@ if nargin > 2
             z=x;
             z.values = x.values.*(1-idx)+idx.*varargin{1}.values;
             z.derivatives(idx(:),:) = varargin{1}.derivatives(idx(:),:);
-            warning('There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.');
+            warning('AutoDiff:maxmin','There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.');
         else
             if isempty(varargin{1})
                 z=x;
@@ -39,7 +39,7 @@ if nargin > 2
                 z=x;
                 z.values = x.values.*(1-idx)+idx.*varargin{1};
                 z.derivatives(idx(:),:) = 0;
-                warning('There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.');
+                warning('AutoDiff:maxmin','There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.');
             end
         end
     end
@@ -49,13 +49,13 @@ elseif nargin==2
         z=x;
         z.values = x.values.*(1-idx)+idx.*varargin{1}.values;
         z.derivatives(idx(:),:) = varargin{1}.derivatives(idx(:),:);
-        warning('There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.');
+        warning('AutoDiff:maxmin','There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.');
     else
         idx = x.values>varargin{1};
         z=x;
         z.values = x.values.*(1-idx)+idx.*varargin{1};
         z.derivatives(idx(:),:) = 0;
-        warning('There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.');
+        warning('AutoDiff:maxmin','There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.');
     end
 else
     z=x;
