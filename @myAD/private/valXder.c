@@ -1,11 +1,7 @@
-/* The matrix is saved in the column-major order.
- * Instead of sorting Ir array after computation, I build up a supplementary
- * array, and rearrange Ir array with one pass O(nrow), but this involves
- * allocating an array of size nrow. This should be fast if (A_deriv*b_val)
- * is not too sparse, but if it is really sparse, it might be faster to
- * sort instead, which will give approximately
- * O(nderiv * nnz_per_column * log(nnz_per_column)). */
-
+/* Inputs: v = (n x 1) {double,indicator} valued {full,sparse} vector
+ *         A = (n x m) double valued sparse matrix
+ * Output: bsxfun(@times,v,A)
+ */
 #include "mex.h"
 
 void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
@@ -62,34 +58,32 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
         }
         /* For a Sparse Vector */
         else {
-            mwIndex *irsV,*jcsV,*pos,old,i;
+            mwIndex *irsV,*jcsV,locV,i,locA;
             irsV    = mxGetIr(prhs[0]);
             jcsV    = mxGetJc(prhs[0]);
-            pos     = mxMalloc(nrow * sizeof(*pos));
-    
-            old=0;
-            for (i=0; i<jcsV[1]; ++i) {
-                for (; old<irsV[i]; ++old) {
-                    pos[old] = -1;
-                }
-                pos[old] = i;
-                ++old;
-            }
-            for (i=old; i<nrow; ++i) {
-                pos[i]=-1;
-            }
-    
+                
             /* Multiply */
             mwIndex k,j,tmp;
             for (j=0 ; j < nderiv ; ++j) {
                 ljcs[j] = counter;
-    
-                for (i=jcsA[j]; i<jcsA[j+1] ; ++i) {
-                    k = irsA[i];
-                    if (pos[k] != (-1)) {
-                        lirs[counter]= k;
-                        srA[counter] = prA[i] * prV[pos[k]];
+                locV = 0;
+                locA = jcsA[j];
+
+		while ((locV < jcsV[1]) && (locA<jcsA[j+1])) {
+                    if (irsV[locV] == irsA[locA]) {
+                        lirs[counter] = irsA[locA];
+                        srA[counter] = prA[locA] * prV[locV];
                         ++counter;
+                        ++locA;
+                        ++locV;
+                    }
+                    else {
+                    if (irsV[locV] > irsA[locA]) {
+                        ++locA;
+                    }
+                    else {
+                        ++locV;
+                    }
                     }
                 }
             }
@@ -127,34 +121,32 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
         }
         /* For a Sparse Vector */
         else {
-            mwIndex *irsV,*jcsV,*pos,old,i;
+            mwIndex *irsV,*jcsV,locV,locA;
             irsV    = mxGetIr(prhs[0]);
             jcsV    = mxGetJc(prhs[0]);
-            pos     = mxMalloc(nrow * sizeof(*pos));
-    
-            old=0;
-            for (i=0; i<jcsV[1]; ++i) {
-                for (; old<irsV[i]; ++old) {
-                    pos[old] = -1;
-                }
-                pos[old] = i;
-                ++old;
-            }
-            for (i=old; i<nrow; ++i) {
-                pos[i]=-1;
-            }
     
             /* Multiply */
             mwIndex k,j,tmp;
             for (j=0 ; j < nderiv ; ++j) {
                 ljcs[j] = counter;
-    
-                for (i=jcsA[j]; i<jcsA[j+1] ; ++i) {
-                    k = irsA[i];
-                    if (pos[k] != (-1)) {
-                        lirs[counter]= k;
-                        srA[counter] = prA[i] * prV[pos[k]];
+                locV = 0;
+                locA = jcsA[j];
+                
+                while ((locV < jcsV[1]) && (locA<jcsA[j+1])) {
+                    if (irsV[locV] == irsA[locA]) {
+                        lirs[counter] = irsA[locA];
+                        srA[counter] = prA[locA] * prV[locV];
+                        ++locA;
+                        ++locV;
                         ++counter;
+                    }
+                    else {
+                    if (irsV[locV] > irsA[locA]) {
+                        ++locA;
+                    }
+                    else {
+                        ++locV;
+                    }
                     }
                 }
             }
