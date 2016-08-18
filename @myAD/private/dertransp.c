@@ -7,21 +7,87 @@
  */
 
 #include "mex.h"
+#include <stdlib.h>
+#include <time.h>
+
+void insertsort(mwIndex *irs, double *prs, mwSize n) {
+  mwIndex i,j;
+  mwIndex swapind;
+  double swapval;
+  for (i=1; i<n; ++i) {
+    swapind = irs[i];
+    swapval = prs[i];
+    for (j=i; j>=0;--j) {
+      if (j==0) {
+        irs[j] = swapind;
+        prs[j] = swapval;
+      }
+      else if (swapind<irs[j-1]) {
+        irs[j] = irs[j-1];
+        prs[j] = prs[j-1];
+      }
+      else {
+        irs[j] = swapind;
+        prs[j] = swapval;
+        break;
+      }
+    }
+  }
+};
 
 /* It uses in-place quicksort to get from unsorted CSC to sorted CSC format*/
 void quicksort(mwIndex* irs, double* prs, mwSize n) {
   mwIndex front, back, pivot;
   mwIndex swapind;
   double swapval;
+  pivot = rand()%n;
+  front = rand()%n;
+  back = rand()%n;
+  if (irs[front]>irs[back]) {
+    if (irs[pivot]>irs[front]) {
+      pivot = irs[front];
+      irs[front] = irs[0];
+      irs[0] = pivot;
+    }
+    else if (irs[pivot]>irs[back]) {
+      front = irs[pivot];
+      irs[pivot] = irs[0];
+      irs[0] = front;
+      pivot = front;
+    }
+    else {
+      pivot = irs[back];
+      irs[back] = irs[0];
+      irs[0] = pivot;
+    }
+  }
+  else {
+    if (irs[pivot]>irs[back]) {
+      pivot = irs[back];
+      irs[back] = irs[0];
+      irs[0] = pivot;
+    }
+    else if (irs[pivot]>irs[front]) {
+      back = irs[pivot];
+      irs[pivot] = irs[0];
+      irs[0] = back;
+      pivot = back;
+    }
+    else {
+      pivot = irs[front];
+      irs[front] = irs[0];
+      irs[0] = pivot;
+    }
+  }
   front = 1;
-  back  = n-1;
-  pivot = irs[0];
+  back = n-1;
+  
   while (front < back) {
     if (irs[front] < pivot) {
       ++front;
     }
     else if (irs[back] > pivot) {
-        --back;
+      --back;
     }
     else {
       swapind = irs[back];
@@ -40,10 +106,14 @@ void quicksort(mwIndex* irs, double* prs, mwSize n) {
     prs[front] = prs[0];
     irs[0] = swapind;
     prs[0] = swapval;
-    if (front >1)
+    if (front > 17)
       quicksort(&irs[0],&prs[0],front);
-    if ((n-1-front)>1)
-      quicksort(&irs[front+2],&prs[front+2],n-1-front);
+    else if (front > 1)
+      insertsort(&irs[0],&prs[0],front);
+    if ((n-1-front) > 17)
+      quicksort(&irs[front+1],&prs[front+1],n-1-front);
+    else if ((n-1-front) > 1)
+      insertsort(&irs[front+1],&prs[front+1],n-1-front);
   }
   else {
     swapind = irs[front-1];
@@ -52,15 +122,20 @@ void quicksort(mwIndex* irs, double* prs, mwSize n) {
     prs[front-1] = prs[0];
     irs[0] = swapind;
     prs[0] = swapval;
-    if (front-1>1)
+    if (front-1 > 17)
       quicksort(&irs[0],&prs[0],front-1);
-    if (n-front > 1)  
+    else if (front-1 > 1)
+      insertsort(&irs[0],&prs[0],front-1);
+    if (n-front > 17)
       quicksort(&irs[front],&prs[front],n-front);
+    else if (n-front > 1)
+      insertsort(&irs[front],&prs[front],n-front);
   }
 };
 
 void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
 {
+  srand(time(NULL));
   mwSize nrow, ncol, nderiv,nnz;
   
   /* Read In Sparse Matrix */
@@ -94,8 +169,10 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
     }
     ljcs[i+1] = jcsA[i+1];
     /* Sort to ensure sorted CSC format */
-    if (ljcs[i+1]-ljcs[i]>1)
-      quicksort(&lirs[ljcs[i]],&lpr[ljcs[i]],ljcs[i+1]-ljcs[i]);
+    if ( (ljcs[i+1] - ljcs[i]) > 17)
+      quicksort(&lirs[ljcs[i]], &lpr[ljcs[i]], ljcs[i+1]-ljcs[i]);
+    else if ( (ljcs[i+1] - ljcs[i]) > 1)
+      insertsort(&lirs[ljcs[i]], &lpr[ljcs[i]], ljcs[i+1]-ljcs[i]);
   }
   plhs[0] = mxCreateSparse(nrow*ncol,nderiv,nnz,mxREAL);
   if (nnz>0) {
