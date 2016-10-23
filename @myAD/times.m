@@ -18,7 +18,7 @@ if isa(x, 'myAD')
         if max(size(y))==1
             x.derivatives = y*x.derivatives;
         elseif max(size(x.values))==1
-            x.derivatives = valXder(y(:), x.derivatives);
+            x.derivatives = valXder(y(:),x.derivatives);
         else
             x.derivatives = valXder(y(:),x.derivatives);
         end

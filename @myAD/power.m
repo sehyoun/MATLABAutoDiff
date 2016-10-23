@@ -4,6 +4,7 @@ function x = power(x,y)
 % In Package myAD - Automatic Differentiation
 % by Martin Fink, June 2006
 % martinfink 'at' gmx.at
+
 if isa(y, 'myAD')
     if isa(x, 'myAD')
         tmp1 = x.values.^(y.values);

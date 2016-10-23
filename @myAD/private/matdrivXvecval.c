@@ -80,6 +80,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
     }
     ljcs[nderiv]=counter;
     
+
     mxRealloc(lirs, counter * sizeof(*lirs));
     mxRealloc(srA, counter * sizeof(*srA));
   }

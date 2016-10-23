@@ -280,8 +280,10 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
                 ljcs[nderiv]=counter;
                 
                 /* Reallocate Output */
-                mxRealloc(lirs, counter * sizeof(*lirs));
-                mxRealloc(srA, counter * sizeof(*srA));
+		if (counter > 0) {
+		  mxRealloc(lirs, counter * sizeof(*lirs));
+		  mxRealloc(srA, counter * sizeof(*srA));
+		}
             }
         }
     }
