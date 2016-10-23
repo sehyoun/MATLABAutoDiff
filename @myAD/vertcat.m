@@ -8,13 +8,14 @@ end
 y=vertcat(varargin{1:i-1});
 
 x = varargin{i};
+l = size(x.derivatives,2);
 if (i>1)
     aux = size(y);
     n = numel(y);
     locs = reshape(1:n,aux);
-    x.values = [y; x.values];
     aux = size(x.values);
-    x.derivatives = [sparse(n, size(x.derivatives,2)); x.derivatives];
+    x.values = [y; x.values];
+    x.derivatives = [sparse(n, l); x.derivatives];
     locs = [locs; n+reshape(1:prod(aux),aux)];
     n = n+prod(aux);
 else
@@ -32,7 +33,7 @@ for j = i+1:nargin
         n = n+prod(aux);
     elseif (~isempty(varargin{j}))
         x.values = [x.values; varargin{j}];
-        x.derivatives(end+numel(varargin{j}),end) = 0;
+        x.derivatives = [x.derivatives;sparse(numel(varargin{j}),l)];
         aux = size(varargin{j});
         locs = [locs; n+reshape(1:prod(aux),aux)];
         n = n+prod(aux);
