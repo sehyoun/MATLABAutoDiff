@@ -11,15 +11,15 @@ if isa(x,'myAD')
                 x.derivatives = sparse(x.values)*y.derivatives...
                                 +matdrivXvecval(x.derivatives,y.values);
             else
-                x.derivatives = matvalXmatder(sparse(x.values),dertransp(y.derivatives,m))...
-                           +dertransp(matvalXmatder(sparse(y.values'),x.derivatives),size(y,2));
+	      x.derivatives = matvalXmatder(sparse(x.values),dertransp(y.derivatives,m)) ...
+		+ dertransp(matvalXmatder(sparse(y.values'),x.derivatives),size(y,2));
             end
             x.values = x.values*y.values;
         elseif max(m,n)==1
-            x.derivatives= valXder(y.values(:),x.derivatives)+y.derivatives*x.values;
+            x.derivatives= valXder(y.values(:),x.derivatives) + y.derivatives*x.values;
             x.values=x.values*y.values;
         elseif numel(y.values)==1
-            x.derivatives=x.derivatives*y.values+valXder(x.values(:),y.derivatives);
+            x.derivatives = x.derivatives*y.values + valXder(x.values(:),y.derivatives);
             x.values=x.values*y.values;
         else
             error('Check that the dimensions match');
@@ -41,7 +41,7 @@ if isa(x,'myAD')
 else
     [n,m]=size(x);
     if m>1 && size(y,1)==m
-        y.derivatives = matvalXmatder(sparse(x'),dertransp(y.derivatives,m));
+        y.derivatives = matvalXmatder(sparse(x),dertransp(y.derivatives,m));
         y.values = x*y.values;
         x=y;
     elseif max(m,n)==1

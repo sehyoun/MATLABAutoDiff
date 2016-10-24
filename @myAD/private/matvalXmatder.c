@@ -67,36 +67,29 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
         }
         else {
           for (o = counter; o>cloc; --o) {
-            if (lirs[o-1] < cir) {
-              if (counter > nnz-1) {
-                nnz = (nnz*(nderiv+1)/(i+1));
-                lirs = mxRealloc( lirs, nnz*sizeof(*lirs));
-                lpr = mxRealloc( lpr, nnz*sizeof(*lpr));
-              }
-              lirs[counter] = cir;
-              lpr[counter] = prB[j]*prA[k];
-              ++counter;
+            if (lirs[o-1] == cir) {
+              lpr[o-1] += prB[j]*prA[k];
               break;
             }
-            else if (lirs[o] == cir) {
-              lpr[o] += prB[j]*prA[k];
-              break;
-            }
-            else if (lirs[o-1] < cir) {
-              if (counter > nnz-1) {
-                nnz = (nnz*(nderiv+1)/(i+1));
-                lirs = mxRealloc( lirs, nnz*sizeof(*lirs));
-                lpr = mxRealloc( lpr, nnz*sizeof(*lpr));
-              }
-              for (p=counter; p>o ;--p) {
-                lirs[p] = lirs[p-1];
-                lpr[p] = lpr[p-1];
-              }
-              lirs[o] = cir;
-              lpr[o] = prB[j]*prA[k];
-              ++counter;
-              break;
-            }
+	    else if (lirs[o-1] < cir) {
+	      for (p=counter; p>o; --p) {
+		lirs[p] = lirs[p-1];
+		lpr[p] = lpr[p-1];
+	      }
+	      lirs[o] = cir;
+	      lpr[o] = prB[j]*prA[k];
+	      ++counter;
+	      break;
+	    }
+	    else if (o == cloc+1) {
+	      for (p=counter; p>cloc; --p) {
+		lirs[p] = lirs[p-1];
+		lpr[p] = lpr[p-1];
+	      }
+	      lirs[cloc] = cir;
+	      lpr[cloc] = prB[j]*prA[k];
+	      ++counter;
+	    }
           }
         }
       }

@@ -61,10 +61,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
                 }
                 ljcs[nderiv]=counter;
                 
-		if (counter > 0) {
-		  mxRealloc(lirs, counter * sizeof(*lirs));
-		  mxRealloc(srA, counter * sizeof(*srA));
-		}
+		mxRealloc(lirs, counter * sizeof(*lirs));
+		mxRealloc(srA, counter * sizeof(*srA));
             }
             /* For a Sparse Vector */
             else {
@@ -99,10 +97,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
                 }
                 ljcs[nderiv]=counter;
                 
-		if (counter > 0) {
-		  mxRealloc(lirs, counter * sizeof(*lirs));
-		  mxRealloc(srA, counter * sizeof(*srA));
-		}
+		mxRealloc(lirs, counter * sizeof(*lirs));
+		mxRealloc(srA, counter * sizeof(*srA));
             }
         }
         /* Real Vector */
@@ -128,10 +124,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
                 ljcs[nderiv]=counter;
                 
                 /* Reallocate Output */
-		if (counter > 0) {
-		  mxRealloc(lirs, counter * sizeof(*lirs));
-		  mxRealloc(srA, counter * sizeof(*srA));
-		}
+		mxRealloc(lirs, counter * sizeof(*lirs));
+		mxRealloc(srA, counter * sizeof(*srA));
             }
             /* For a Sparse Vector */
             else {
@@ -167,10 +161,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
                 ljcs[nderiv]=counter;
                 
                 /* Reallocate Output */
-		if (counter > 0) {
-		  mxRealloc(lirs, counter * sizeof(*lirs));
-		  mxRealloc(srA, counter * sizeof(*srA));
-		}
+		mxRealloc(lirs, counter * sizeof(*lirs));
+		mxRealloc(srA, counter * sizeof(*srA));
             }
         }
     }
@@ -199,10 +191,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
                 }
                 ljcs[nderiv]=counter;
                 
-		if (counter > 0) {
-		  mxRealloc(lirs, counter * sizeof(*lirs));
-		  mxRealloc(srA, counter * sizeof(*srA));
-		}
+		mxRealloc(lirs, counter * sizeof(*lirs));
+		mxRealloc(srA, counter * sizeof(*srA));
             }
             /* For a Sparse Vector */
             else {
@@ -224,10 +214,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
                 }
             }
             ljcs[nderiv]=counter;
-            if (counter > 0) {
-              mxRealloc(lirs, counter * sizeof(*lirs));
-              mxRealloc(srA, counter * sizeof(*srA));
-	    }
+	    mxRealloc(lirs, counter * sizeof(*lirs));
+	    mxRealloc(srA, counter * sizeof(*srA));
         }
         /* Real Vector */
         else {
@@ -253,10 +241,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
                 ljcs[nderiv]=counter;
                 
                 /* Reallocate Output */
-		if (counter > 0) {
-		  mxRealloc(lirs, counter * sizeof(*lirs));
-		  mxRealloc(srA, counter * sizeof(*srA));
-		}
+		mxRealloc(lirs, counter * sizeof(*lirs));
+		mxRealloc(srA, counter * sizeof(*srA));
             }
             /* For a Sparse Vector */
             else {
@@ -280,10 +266,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
                 ljcs[nderiv]=counter;
                 
                 /* Reallocate Output */
-		if (counter > 0) {
-		  mxRealloc(lirs, counter * sizeof(*lirs));
-		  mxRealloc(srA, counter * sizeof(*srA));
-		}
+		mxRealloc(lirs, counter * sizeof(*lirs));
+		mxRealloc(srA, counter * sizeof(*srA));
             }
         }
     }
