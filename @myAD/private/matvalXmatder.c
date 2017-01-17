@@ -72,6 +72,11 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
               break;
             }
 	    else if (lirs[o-1] < cir) {
+	      if (counter > nnz-1) {
+		nnz = (nnz*(nderiv+1)/(i+1));
+		lirs = mxRealloc( lirs, nnz*sizeof(*lirs));
+		lpr = mxRealloc( lpr, nnz*sizeof(*lpr));
+	      }	      
 	      for (p=counter; p>o; --p) {
 		lirs[p] = lirs[p-1];
 		lpr[p] = lpr[p-1];
@@ -82,6 +87,11 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
 	      break;
 	    }
 	    else if (o == cloc+1) {
+	      if (counter > nnz-1) {
+		nnz = (nnz*(nderiv+1)/(i+1));
+		lirs = mxRealloc( lirs, nnz*sizeof(*lirs));
+		lpr = mxRealloc( lpr, nnz*sizeof(*lpr));
+	      }
 	      for (p=counter; p>cloc; --p) {
 		lirs[p] = lirs[p-1];
 		lpr[p] = lpr[p-1];
