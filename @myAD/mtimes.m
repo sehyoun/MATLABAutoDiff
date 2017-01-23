@@ -41,7 +41,11 @@ if isa(x,'myAD')
 else
     [n,m]=size(x);
     if m>1 && size(y,1)==m
-        y.derivatives = matvalXmatder(sparse(x),dertransp(y.derivatives,m));
+		if size(y,2)==1
+			y.derivatives = sparse(x)*y.derivatives;
+        else
+	      y.derivatives = matvalXmatder(sparse(x),dertransp(y.derivatives,m));
+        end
         y.values = x*y.values;
         x=y;
     elseif max(m,n)==1

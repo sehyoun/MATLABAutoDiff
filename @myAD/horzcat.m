@@ -11,8 +11,8 @@ if (i>1)
     aux = size(y);
     n = numel(y);
     locs = reshape(1:n,aux);
-    x.values = [y, x.values];
     aux = size(x.values);
+    x.values = [y, x.values];
     x.derivatives = [sparse(n, size(x.derivatives,2)); x.derivatives];
     locs = [locs, n+reshape(1:prod(aux),aux)];
     n = n+prod(aux);
@@ -37,4 +37,6 @@ for j = i+1:nargin
         n = n+prod(aux);
     end
 end
+    disp(locs);
+      disp(x.derivatives);
 x.derivatives = x.derivatives(locs(:),:);
