@@ -37,6 +37,4 @@ for j = i+1:nargin
         n = n+prod(aux);
     end
 end
-    disp(locs);
-      disp(x.derivatives);
 x.derivatives = x.derivatives(locs(:),:);
