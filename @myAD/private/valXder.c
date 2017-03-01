@@ -34,9 +34,9 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
   /* Allocate Data Matrix for Output*/
   double *srA;
   mwIndex *lirs,*ljcs;
-  lirs    = mxMalloc( nnz * sizeof(*lirs));
-  ljcs    = mxMalloc( (nderiv+1) * sizeof(*ljcs));
-  srA     = mxMalloc( nnz * sizeof(*srA));
+  lirs = mxMalloc( nnz * sizeof(*lirs));
+  ljcs = mxMalloc( (nderiv+1) * sizeof(*ljcs));
+  srA = mxMalloc( nnz * sizeof(*srA));
     
   if (nrow_A != 1) {
     /* Logical Vector */
@@ -290,8 +290,23 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
   /* Set Output */
   plhs[0] = mxCreateSparse(nrow,nderiv,counter,mxREAL);
   if (counter > 0) {
+    /* ugly fix for now. Will be fixed later */
+    mwIndex *tmp1;
+    tmp1 = mxGetIr(plhs[0]);
+    mxFree(tmp1);
+    tmp1 = mxGetJc(plhs[0]);
+    mxFree(tmp1);
+    double *aux1;
+    aux1 = mxGetPr(plhs[0]);
+    mxFree(aux1);
+
     mxSetIr(plhs[0],lirs);
     mxSetJc(plhs[0],ljcs);
     mxSetPr(plhs[0],srA);
+  }
+  else {
+    mxFree(lirs);
+    mxFree(ljcs);
+    mxFree(srA);
   }
 }

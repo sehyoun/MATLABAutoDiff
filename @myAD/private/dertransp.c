@@ -202,8 +202,23 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
   }
   plhs[0] = mxCreateSparse(nrow*ncol,nderiv,nnz,mxREAL);
   if (nnz>0) {
+    /* ugly fix for now. Will be fixed later */
+    mwIndex *tmp1;
+    tmp1 = mxGetIr(plhs[0]);
+    mxFree(tmp1);
+    tmp1 = mxGetJc(plhs[0]);
+    mxFree(tmp1);
+    double *aux1;
+    aux1 = mxGetPr(plhs[0]);
+    mxFree(aux1);
+
     mxSetIr(plhs[0],lirs);
     mxSetJc(plhs[0],ljcs);
     mxSetPr(plhs[0],lpr);
+  }
+  else {
+    mxFree(lpr);
+    mxFree(ljcs);
+    mxFree(lirs);
   }
 }
