@@ -7,19 +7,24 @@ function varargout = min(x,varargin)
 if nargin > 2
     if isa(varargin{2},'double')
         direction = varargin{2};
-        if direction == 1
-            z=x;
-            [n,m]=size(x.values);
-            [z.values,idx]=min(x.values,varargin{:});
-            z.derivatives = x.derivatives(n*(0:(m-1))+idx,:);
-            varargout{2} = idx;
+        z=x;
+
+        [z.values,idx] = min(x.values,varargin{:});
+
+        aux = size(x.values);
+        n_pre = prod(aux(1:direction-1));
+        n_cur = prod(aux(1:direction));
+        if direction > 2
+            locs = bsxfun(@plus,reshape(1:n_pre,aux(1:direction-1)),(idx-1)*n_pre);
+        elseif direction == 2
+            locs = bsxfun(@plus,(1:n_pre)',(idx-1)*n_pre);
         else
-            z=x;
-            [n,~]=size(x.values);
-            [z.values,idx]=min(x.values,varargin{:});
-            z.derivatives = x.derivatives((idx-1)*n+(1:n)',:);
-            varargout{2} = idx;
+            locs = bsxfun(@plus,(1:n_pre),(idx-1)*n_pre);
         end
+        locs = bsxfun(@plus,locs,reshape(0:n_cur:prod(aux)-1,[ones(1,direction),aux(direction+1:end)]));
+
+        z.derivatives = x.derivatives(locs(:),:);
+        varargout{2} = idx;
     else
         if isa(varargin{1},'myAD')
             idx = x.values>varargin{1}.values;
