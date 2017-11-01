@@ -27,6 +27,13 @@ else
             S.subs{2} = 1:aux(2);
         end
 
+        if islogical(S.subs{1})
+            S.subs{1} = find(S.subs{1});
+        end
+        if islogical(S.subs{2})
+            S.subs{2} = find(S.subs{2});
+        end
+
         S.subs{1} = mod(S.subs{1},aux(1));
         func1 = @(i) find(i==S.subs{1});
         func2 = @(i) find(i==S.subs{2});
@@ -34,7 +41,7 @@ else
         n = length(S.subs{1});
         m = length(S.subs{2});
         l = size(x.derivatives,2);
-        
+
         [i,j,v] = find(x.derivatives);
         locs = (ismember(mod(i,I),S.subs{1}) & ismember(ceil(i/I),S.subs{2}));
         i = arrayfun(func1,mod(i(locs),I)) + (arrayfun(func2,ceil(i(locs)/I))-1)*length(S.subs{1});
