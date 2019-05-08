@@ -1,4 +1,5 @@
 function x = sum(x,varargin)
+% Edited by Meredith Chai, May 2019
 % Edited by SeHyoun Ahn, July 2016
 % Edited by SeHyoun Ahn, Jan 2016
 
@@ -9,10 +10,15 @@ function x = sum(x,varargin)
 if nargin<2 || ~isa(varargin{1},'double')
     aux = size(x.values);
     reduction = find(aux>1);
-    reduction = reduction(1);
-    l=size(x.derivatives,2);
-    x.values = sum(x.values,varargin{:});
-    x.derivatives = reshape(sum(reshape(x.derivatives,aux(reduction),prod(aux)/aux(reduction)*l),varargin{:}),prod(aux)/aux(reduction),l);
+    if ~isempty(reduction)
+        reduction = reduction(1);
+        l=size(x.derivatives,2);
+        x.values = sum(x.values,varargin{:});
+        x.derivatives = reshape(sum(reshape(x.derivatives,aux(reduction),prod(aux)/aux(reduction)*l),varargin{:}),prod(aux)/aux(reduction),l);
+    else        % when the #inputs == 1, just output x
+        % x.values = x.values;
+        % x.derivatives = x.derivatives;
+        return;
 else
     aux = size(x.values);
     reduction = varargin{1};
