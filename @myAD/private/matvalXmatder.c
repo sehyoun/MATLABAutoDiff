@@ -38,10 +38,13 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
     /* Prepare Output Matrix */
     mwIndex *lirs, *ljcs;
     double *lpr;
-    nnz = jcsB[nderiv];
-    lirs = mxMalloc( nnz* sizeof(*lirs));
-    ljcs = mxMalloc( (nderiv+1) * sizeof(*ljcs));
-    lpr = mxMalloc( nnz* sizeof(*lpr));
+    nnz = jcsB[nderiv] + 1;
+
+    plhs[0] = mxCreateSparse(n*l, nderiv, nnz, mxREAL);
+
+    lirs = mxGetIr(plhs[0]);
+    ljcs = mxGetJc(plhs[0]);
+    lpr = mxGetPr(plhs[0]);
 
     mwIndex i,j, cloc, cir, k,o,p;
     mwSignedIndex pos;
@@ -57,9 +60,9 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
                 cir = (irsB[j]%l)*n + irsA[k];
                 if (counter == cloc) {
                     if (counter > nnz-1) {
-                        nnz = (nnz*(nderiv+1)/(i+1));
-                        lirs = mxRealloc( lirs, nnz*sizeof(*lirs));
-                        lpr = mxRealloc( lpr, nnz*sizeof(*lpr));
+                        nnz = ((nnz+1)*(nderiv+1)/(i+1));
+                        lirs = mxRealloc(lirs, nnz*sizeof(*lirs));
+                        lpr = mxRealloc(lpr, nnz*sizeof(*lpr));
                     }
                     lirs[counter] = cir;
                     lpr[counter] = prB[j]*prA[k];
@@ -73,7 +76,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
                         }
                         else if (lirs[o-1] < cir) {
                             if (counter > nnz-1) {
-                                nnz = (nnz*(nderiv+1)/(i+1));
+                                nnz = ((nnz+1)*(nderiv+1)/(i+1));
                                 lirs = mxRealloc( lirs, nnz*sizeof(*lirs));
                                 lpr = mxRealloc( lpr, nnz*sizeof(*lpr));
                             }
@@ -88,7 +91,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
                         }
                         else if (o == cloc+1) {
                             if (counter > nnz-1) {
-                                nnz = (nnz*(nderiv+1)/(i+1));
+                                nnz = ((nnz+1)*(nderiv+1)/(i+1));
                                 lirs = mxRealloc( lirs, nnz*sizeof(*lirs));
                                 lpr = mxRealloc( lpr, nnz*sizeof(*lpr));
                             }
@@ -109,29 +112,12 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
 
 
     /* Prepare Output */
-    plhs[0] = mxCreateSparse(n*l,nderiv,counter,mxREAL);
-    if (counter>0) {
-        /* Resize Output */
-        lirs = mxRealloc( lirs, counter * sizeof(*lirs));
-        lpr = mxRealloc( lpr, counter * sizeof(*lpr));
+    if (counter > 0) {
+        lirs = mxRealloc(lirs, counter*sizeof(*lirs));
+        lpr = mxRealloc(lpr, counter*sizeof(*lpr));
 
-        /* ugly fix for now. Will be fixed later */
-        mwIndex *tmp1;
-        tmp1 = mxGetIr(plhs[0]);
-        mxFree(tmp1);
-        tmp1 = mxGetJc(plhs[0]);
-        mxFree(tmp1);
-        double *aux1;
-        aux1 = mxGetPr(plhs[0]);
-        mxFree(aux1);
-
-        mxSetIr(plhs[0],lirs);
-        mxSetJc(plhs[0],ljcs);
-        mxSetPr(plhs[0],lpr);
-    }
-    else {
-        mxFree(lirs);
-        mxFree(ljcs);
-        mxFree(lpr);
+        mxSetIr(plhs[0], lirs);
+        mxSetPr(plhs[0], lpr);
+        mxSetNzmax(plhs[0], counter+1);
     }
 }

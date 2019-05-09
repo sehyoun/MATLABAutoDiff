@@ -81,7 +81,7 @@ void quicksort(mwIndex* irs, double* prs, mwSize n) {
   }
   front = 1;
   back = n-1;
-  
+
   while (front < back) {
     if (irs[front] < pivot) {
       ++front;
@@ -137,7 +137,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
 {
   srand(time(NULL));
   mwSize nrow, ncol, nderiv,nnz;
-  
+
   /* Read In Sparse Matrix */
   mwIndex *irsA, *jcsA;
   double *prA;
@@ -147,21 +147,27 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
   jcsA   = mxGetJc(prhs[0]);
   prA    = mxGetPr(prhs[0]);
   nnz    = jcsA[nderiv];
-  
+
   /* Read in the number of rows in the Matrix A */
   nrow   = mxGetScalar(prhs[1]);
   ncol   = ncol/nrow;
-  
+
   /* Prepare Output Matrix */
   mwIndex *lirs, *ljcs;
   double *lpr;
-  lirs    = mxMalloc( nnz * sizeof(*lirs));
-  ljcs    = mxMalloc( (nderiv+1) * sizeof(*ljcs));
-  lpr     = mxMalloc( nnz * sizeof(*lpr));
-  
+  plhs[0] = mxCreateSparse(nrow*ncol,nderiv,nnz,mxREAL);
+
+  lirs = mxGetIr(plhs[0]);
+  ljcs = mxGetJc(plhs[0]);
+  lpr = mxGetPr(plhs[0]);
+
+  // lirs    = mxMalloc( nnz * sizeof(*lirs));
+  // ljcs    = mxMalloc( (nderiv+1) * sizeof(*ljcs));
+  // lpr     = mxMalloc( nnz * sizeof(*lpr));
+
   mwIndex i,j,tmp;
   ljcs[0]=0;
-  
+
   #pragma omp parallel for default(shared) private(i,j) num_threads(2)
   for (i=0; i<nderiv; ++i) {
     /* Compute the new row Index */
@@ -176,10 +182,10 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
     else if ( (ljcs[i+1] - ljcs[i]) > 1)
       insertsort(&lirs[ljcs[i]], &lpr[ljcs[i]], ljcs[i+1]-ljcs[i]);
   }
-  plhs[0] = mxCreateSparse(nrow*ncol,nderiv,nnz,mxREAL);
-  if (nnz>0) {
-    mxSetIr(plhs[0],lirs);
-    mxSetJc(plhs[0],ljcs);
-    mxSetPr(plhs[0],lpr);
-  }
+  // plhs[0] = mxCreateSparse(nrow*ncol,nderiv,nnz,mxREAL);
+  // if (nnz>0) {
+  //   mxSetIr(plhs[0],lirs);
+  //   mxSetJc(plhs[0],ljcs);
+  //   mxSetPr(plhs[0],lpr);
+  // }
 }

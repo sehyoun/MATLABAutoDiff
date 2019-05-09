@@ -1,7 +1,7 @@
 function A = sparse(i,j,v,n,m);
-% by SeHyoun Ahn, Oct 2017
+  % by SeHyoun Ahn, Oct 2017
 
-% This function does not support all use cases of find.
+  % This function does not support all use cases of find.
     val = getvalues(v);
     der = getderivs(v);
 

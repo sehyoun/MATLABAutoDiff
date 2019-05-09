@@ -181,9 +181,10 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
     ncol = ncol/nrow;
 
     /* Prepare Output Matrix */
-    lirs = mxMalloc( nnz * sizeof(*lirs));
-    ljcs = mxMalloc( (nderiv+1) * sizeof(*ljcs));
-    lpr = mxMalloc( nnz * sizeof(*lpr));
+    plhs[0] = mxCreateSparse(nrow*ncol, nderiv, nnz, mxREAL);
+    lirs = mxGetIr(plhs[0]);
+    ljcs = mxGetJc(plhs[0]);
+    lpr = mxGetPr(plhs[0]);
 
     ljcs[0] = 0;
     for (i=0; i<nderiv; ++i) {
@@ -201,26 +202,5 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs,const mxArray *prhs[])
         else if ( (ljcs[i+1] - ljcs[i]) > 1) {
             insertsort(&lirs[ljcs[i]], &lpr[ljcs[i]], ljcs[i+1]-ljcs[i]);
         }
-    }
-    plhs[0] = mxCreateSparse(nrow*ncol,nderiv,nnz,mxREAL);
-    if (nnz>0) {
-        /* ugly fix for now. Will be fixed later */
-        mwIndex *tmp1;
-        tmp1 = mxGetIr(plhs[0]);
-        mxFree(tmp1);
-        tmp1 = mxGetJc(plhs[0]);
-        mxFree(tmp1);
-        double *aux1;
-        aux1 = mxGetPr(plhs[0]);
-        mxFree(aux1);
-
-        mxSetIr(plhs[0],lirs);
-        mxSetJc(plhs[0],ljcs);
-        mxSetPr(plhs[0],lpr);
-    }
-    else {
-        mxFree(lpr);
-        mxFree(ljcs);
-        mxFree(lirs);
     }
 }
