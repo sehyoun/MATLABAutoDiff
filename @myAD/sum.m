@@ -1,10 +1,16 @@
 function x = sum(x,varargin)
-  % Edited by SeHyoun Ahn, July 2016
-  % Edited by SeHyoun Ahn, Jan 2016
+% Edited by Meredith Chai, May 2019
+% Edited by SeHyoun Ahn, July 2016
+% Edited by SeHyoun Ahn, Jan 2016
 
   % In Package myAD - Automatic Differentiation
   % by Martin Fink, May 2007
   % martinfink 'at' gmx.at
+
+  % Check if x has only one element.
+  if numel(x) == 1
+    return;
+  end
 
   if nargin<2 || ~isa(varargin{1},'double')
     aux = size(x.values);
