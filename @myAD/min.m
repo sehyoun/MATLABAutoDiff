@@ -50,11 +50,19 @@ function varargout = min(x,varargin)
     end
   elseif nargin==2
     if isa(varargin{1},'myAD')
-      idx = x.values>varargin{1}.values;
-      z=x;
-      z.values = x.values.*(1-idx)+idx.*varargin{1}.values;
-      z.derivatives(idx(:),:) = varargin{1}.derivatives(idx(:),:);
-      warning('AutoDiff:maxmin','There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.  To the turnoff warning, run <warning(''off'',''AutoDiff:maxmin'')>.');
+      if isa(x, 'myAD')
+        idx = x.values > varargin{1}.values;
+        z=x;
+        z.values = x.values.*(1-idx)+idx.*varargin{1}.values;
+        z.derivatives(idx(:),:) = varargin{1}.derivatives(idx(:),:);
+        warning('AutoDiff:maxmin','There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.  To the turnoff warning, run <warning(''off'',''AutoDiff:maxmin'')>.');
+      else
+        idx = x > varargin{1}.values;
+        z=varargin{1};
+        z.values = x.*(1-idx)+idx.*varargin{1}.values;
+        z.derivatives(idx(:),:) = varargin{1}.derivatives(idx(:),:);
+        warning('AutoDiff:maxmin','There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.  To the turnoff warning, run <warning(''off'',''AutoDiff:maxmin'')>.');
+      end
     else
       idx = x.values>varargin{1};
       z=x;

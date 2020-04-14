@@ -4,6 +4,9 @@ function varargout = size(x, varargin)
     varargout = {size(x.values,varargin{:})};
   else
     aux = size(x.values,varargin{:});
+    for iter = length(aux)+1:nargout
+      aux(iter) = 1;
+    end
     varargout = mat2cell(aux(1:nargout),1,ones(nargout,1));
   end
 end
