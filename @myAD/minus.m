@@ -6,6 +6,7 @@ function x = minus(x,y)
   % martinfink 'at' gmx.at
   if isa(x, 'myAD')
     if isa(y, 'myAD')
+      [x,y] = binary_ext(x,y);
       x.values = x.values - y.values;
       if numel(x) == numel(y)
         x.derivatives = x.derivatives - y.derivatives;

@@ -31,7 +31,7 @@ function varargout = max(x,varargin)
         z=x;
         z.values = x.values.*(1-idx)+idx.*varargin{1}.values;
         z.derivatives(idx(:),:) = varargin{1}.derivatives(idx(:),:);
-        warning('AutoDiff:maxmin','There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.  To the turnoff warning, run <warning(''off'',''AutoDiff:maxmin'')>.');
+        warning('AutoDiff:maxmin','There is an ambiguity in what the derivative should be when the values are equal. This is resolved by picking the derivatives of the first one.  To the turnoff the warning, run <warning(''off'',''AutoDiff:maxmin'')>.');
       else
         if isempty(varargin{1})
           z=x;

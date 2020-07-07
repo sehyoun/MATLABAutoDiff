@@ -4,6 +4,7 @@ function y=mldivide(x,y)
   if isa(x,'myAD')
     [n,m]=size(x.values);
     if isa(y,'myAD')
+      [x,y] = binary_ext(x,y);
       if m>1 && size(y,1)==m
         if size(y,2)>1
           z=myAD(x.values\y.values,sparse(n*size(y,2),size(y.derivatives,2)));
@@ -13,10 +14,10 @@ function y=mldivide(x,y)
           y=z;
         else
           y.values = x.values\y.values;
-          y.derivatives = sparse(x.values)\(y.derivatives - matdrivXvecval(x.derivatives,y.values));
+          y.derivatives = x.values\(y.derivatives - matdrivXvecval(x.derivatives,y.values));
         end
       elseif max(m,n)==1
-        y.derivatives = y.derivatives/x.values - valXder(y.values(:)/x.values^2,x.derivatives);
+        y.derivatives = y.derivatives/x.values - valXder(y.values(:)/x.values(:)^2,x.derivatives);
         y.values=y.values/x.values;
       else
         error('Check that the dimensions match');
@@ -35,7 +36,7 @@ function y=mldivide(x,y)
           y=z;
         end
       elseif max(m,n)==1
-        x.derivatives = - valXder(y(:)/x.values^2,x.derivatives);
+        x.derivatives = - valXder(y(:)/x.values(:)^2,x.derivatives);
         x.values=y/x.values;
         y=x;
       else

@@ -7,6 +7,7 @@ function x = power(x,y)
 
   if isa(y, 'myAD')
     if isa(x, 'myAD')
+      [x,y] = binary_ext(x,y);
       tmp1 = x.values.^(y.values);
       tmp2 = tmp1.*log(x.values);
       tmp3 = y.values.*x.values.^(y.values-1);

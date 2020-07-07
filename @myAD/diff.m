@@ -32,7 +32,7 @@ function x = diff(x,varargin)
     p = permute(reshape(1:(prod(aux)/aux(reduction)*(aux(reduction)-1)),[aux(reduction)-1,aux(1:reduction-1),aux(reduction+1:length(aux))]),[2:reduction,1,reduction+1:length(aux)]);
     x.derivatives = x.derivatives(p,:);
     x.values = diff(x.values,[],varargin{2});
-    if isa(varargin{1},'double') && varargin{1} >1
+    if ~isempty(varargin{1}) && isa(varargin{1},'double') && varargin{1} > 1
       x = diff(x,varargin{1}-1,varargin{2});
     end
   end

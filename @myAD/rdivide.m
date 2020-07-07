@@ -6,10 +6,11 @@ function x = rdivide(x,y)
   % martinfink 'at' gmx.at
   if isa(x, 'myAD')
     if isa(y, 'myAD')
+      [x,y] = binary_ext(x,y);
       if numel(y.values)==1
-        x.derivatives = x.derivatives/y.values - valXder(x.values(:)/y.values^2,y.derivatives);
+        x.derivatives = x.derivatives/y.values - valXder(x.values(:)/y.values(:)^2,y.derivatives);
       elseif numel(x.values)==1
-        x.derivatives = valXder(1./y.values(:),x.derivatives) - valXder(x.values./y.values(:).^2,y.derivatives);
+        x.derivatives = valXder(1./y.values(:),x.derivatives) - valXder(x.values(:)./y.values(:).^2,y.derivatives);
       else
         x.derivatives = valXder(1./y.values(:), x.derivatives) - valXder(x.values(:)./y.values(:).^2, y.derivatives);
       end
@@ -26,9 +27,9 @@ function x = rdivide(x,y)
     end
   else
     if max(size(y.values))==1
-      y.derivatives = valXder(-x(:)/y.values^2,y.derivatives);
+      y.derivatives = valXder(-x(:)/y.values(:)^2,y.derivatives);
     elseif max(size(x))==1
-      y.derivatives = valXder(-x./y.values(:).^2,y.derivatives);
+      y.derivatives = valXder(-x(:)./y.values(:).^2,y.derivatives);
     else
       y.derivatives = valXder(- x(:)./y.values(:).^2, y.derivatives);
     end

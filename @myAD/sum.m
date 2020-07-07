@@ -8,7 +8,7 @@ function x = sum(x,varargin)
   % martinfink 'at' gmx.at
 
   % Check if x has only one element.
-  if numel(x) == 1
+  if numel(x) == 1 || (nargin == 2 && size(x, varargin{1}) == 1)
     return;
   end
 

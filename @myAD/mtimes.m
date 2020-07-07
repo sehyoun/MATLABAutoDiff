@@ -5,11 +5,12 @@ function x = mtimes(x, y)
   if isa(x,'myAD')
     [n,m] = size(x.values);
     if isa(y,'myAD')
+      [x,y] = binary_ext(x,y);
       if (m>1 && size(y,1)==m)
         if (size(y,2)==1)
           x.derivatives = sparse(x.values)*y.derivatives + matdrivXvecval(x.derivatives, y.values);
         else
-  	    x.derivatives = matvalXmatder(x.values, y.derivatives) + matderXmatval(x.derivatives, y.values);
+  	      x.derivatives = matvalXmatder(x.values, y.derivatives) + matderXmatval(x.derivatives, y.values);
         end
         x.values = x.values*y.values;
       elseif max(m,n)==1
@@ -23,7 +24,11 @@ function x = mtimes(x, y)
       end
     else
       if m>1 && size(y,1)==m
-        x.derivatives = matderXmatval(x.derivatives, y);
+        if (size(y,2) == 1)
+          x.derivatives = matdrivXvecval(x.derivatives, y);
+        else
+          x.derivatives = matderXmatval(x.derivatives, y);
+        end
         x.values = x.values*y;
       elseif max(m,n) == 1
         x.derivatives = valXder(y(:),x.derivatives);
@@ -38,10 +43,10 @@ function x = mtimes(x, y)
   else
     [n,m]=size(x);
     if m>1 && size(y,1)==m
-  	if size(y,2)==1
-  	  y.derivatives = sparse(x)*y.derivatives;
+  	  if size(y,2)==1
+  	    y.derivatives = sparse(x)*y.derivatives;
       else
-  	  y.derivatives = matvalXmatder(x, y.derivatives);
+  	    y.derivatives = matvalXmatder(x, y.derivatives);
       end
       y.values = x*y.values;
       x = y;
