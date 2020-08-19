@@ -30,9 +30,9 @@ function x = vertcat(varargin)
     if isa(varargin{j}, 'myAD')
       x.values = [x.values; varargin{j}.values];
       [ii_curr, jj_curr, vv_curr] = find(varargin{j}.derivatives);
-      ii = [ii; ii_curr(:) + n];
-      jj = [jj; jj_curr(:)];
-      vv = [vv; vv_curr(:)];
+      ii = [ii(:); ii_curr(:) + n];
+      jj = [jj(:); jj_curr(:)];
+      vv = [vv(:); vv_curr(:)];
       aux = size(varargin{j}.values);
       locs = [locs; n+reshape(1:prod(aux),aux)];
       n = n+prod(aux);
