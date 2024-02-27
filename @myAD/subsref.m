@@ -6,7 +6,6 @@ function x = subsref(x, S)
   % In Package myAD - Automatic Differentiation
   % by Martin Fink, May 2007
   % martinfink 'at' gmx.at
-
   if length(S) > 1
     subed = builtin('subsref', x, S(1:end-1));
     x = subsref(subed, S(end));
@@ -19,9 +18,6 @@ function x = subsref(x, S)
       return;
     end
 
-    if isa(x.values, 'diagmat')
-      x.values = sparse(x.values);
-    end
     aux=size(x.values);
     if ~issparse(x.values)
       if (length(S.subs) == 1)

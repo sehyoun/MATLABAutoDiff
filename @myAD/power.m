@@ -7,7 +7,9 @@ function x = power(x,y)
 
   if isa(y, 'myAD')
     if isa(x, 'myAD')
-      [x,y] = binary_ext(x,y);
+      if size(x.derivatives, 2) ~= size(y.derivatives, 2)
+        [x,y] = binary_ext(x,y);
+      end
       tmp1 = x.values.^(y.values);
       tmp2 = tmp1.*log(x.values);
       tmp3 = y.values.*x.values.^(y.values-1);

@@ -27,15 +27,13 @@ function x = horzcat(varargin)
       x.values = [x.values, varargin{j}.values];
       x.derivatives = [x.derivatives; varargin{j}.derivatives];
       aux = size(varargin{j}.values);
-      locs = [locs, n+reshape(1:prod(aux),aux)];
-      n = n+prod(aux);
     elseif (~isempty(varargin{j}))
       x.values = [x.values, varargin{j}];
       x.derivatives(end+numel(varargin{j}),end) = 0;
       aux = size(varargin{j});
-      locs = [locs, n+reshape(1:prod(aux),aux)];
-      n = n+prod(aux);
     end
+    locs = [locs, n+reshape(1:prod(aux),aux)];
+    n = n+prod(aux);
   end
   x.derivatives = x.derivatives(locs(:),:);
 end

@@ -26,24 +26,39 @@ function x = vertcat(varargin)
     n = prod(aux);
   end
 
+  ii_cell = cell(nargin-i+1,1);
+  ii_cell{1} = ii(:);
+  jj_cell = cell(nargin-i+1,1);
+  jj_cell{1} = jj(:);
+  vv_cell = cell(nargin-i+1,1);
+  vv_cell{1} = vv(:);
   for j = i+1:nargin
     if isa(varargin{j}, 'myAD')
       x.values = [x.values; varargin{j}.values];
       [ii_curr, jj_curr, vv_curr] = find(varargin{j}.derivatives);
-      ii = [ii(:); ii_curr(:) + n];
-      jj = [jj(:); jj_curr(:)];
-      vv = [vv(:); vv_curr(:)];
+      % ii = [ii(:); ii_curr(:) + n];
+      % jj = [jj(:); jj_curr(:)];
+      % vv = [vv(:); vv_curr(:)];
+      ii_cell{j-i+1} = ii_curr(:) + n;
+      jj_cell{j-i+1} = jj_curr(:);
+      vv_cell{j-i+1} = vv_curr(:);
       aux = size(varargin{j}.values);
-      locs = [locs; n+reshape(1:prod(aux),aux)];
-      n = n+prod(aux);
     elseif (~isempty(varargin{j}))
       x.values = [x.values; varargin{j}];
-      x.derivatives = [x.derivatives;sparse(numel(varargin{j}),l)];
+      % x.derivatives = [x.derivatives;sparse(numel(varargin{j}),l)];
       aux = size(varargin{j});
-      locs = [locs; n+reshape(1:prod(aux),aux)];
-      n = n+prod(aux);
     end
+    locs = [locs; n+reshape(1:prod(aux),aux)];
+    n = n+prod(aux);
   end
-  x.derivatives = sparse(ii, jj, vv, n, l);
-  x.derivatives = x.derivatives(locs(:),:);
+  locs = locs(:);
+  ii = cell2mat(ii_cell);
+  jj = cell2mat(jj_cell);
+  vv = cell2mat(vv_cell);
+
+  % x.derivatives = sparse(locs(ii), jj, vv, n, l);
+
+  [~, inds] = sort(locs);
+  x.derivatives = sparse(inds(ii), jj, vv, n, l);
+  % x.derivatives = x.derivatives(locs(:),:);
 end

@@ -6,7 +6,7 @@ function [i,j,v] = find(A);
   val = getvalues(A);
   der = getderivs(A);
 
-  if issparse(val)
+  if nargout > 1
     [i,j,retval] = find(val);
     m = size(val,1);
     retder = der((j-1)*m + i, :);

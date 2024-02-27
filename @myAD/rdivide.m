@@ -6,7 +6,9 @@ function x = rdivide(x,y)
   % martinfink 'at' gmx.at
   if isa(x, 'myAD')
     if isa(y, 'myAD')
-      [x,y] = binary_ext(x,y);
+      if size(x.derivatives, 2) ~= size(y.derivatives, 2)
+        [x,y] = binary_ext(x,y);
+      end
       if numel(y.values)==1
         x.derivatives = x.derivatives/y.values - valXder(x.values(:)/y.values(:)^2,y.derivatives);
       elseif numel(x.values)==1

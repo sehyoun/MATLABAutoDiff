@@ -4,7 +4,9 @@ function y=mldivide(x,y)
   if isa(x,'myAD')
     [n,m]=size(x.values);
     if isa(y,'myAD')
-      [x,y] = binary_ext(x,y);
+      if size(x.derivatives, 2) ~= size(y.derivatives, 2)
+        [x,y] = binary_ext(x,y);
+      end
       if m>1 && size(y,1)==m
         if size(y,2)>1
           z=myAD(x.values\y.values,sparse(n*size(y,2),size(y.derivatives,2)));

@@ -47,4 +47,3 @@ function [U, T] = schur_helper(A, U, T)
   [i,j,v] = find(result(n_row*n_k+1:end, :));
   T = myAD(T, sparse(ind_keep(i), j, v, n_k*n_k, n_div));
 end
-

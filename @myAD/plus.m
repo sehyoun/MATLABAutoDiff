@@ -6,22 +6,29 @@ function x = plus(x, y)
   % martinfink 'at' gmx.at
   if isa(x, 'myAD')
     if isa(y, 'myAD')
-      [x,y] = binary_ext(x,y);
+      if size(x.derivatives, 2) ~= size(y.derivatives, 2)
+        [x,y] = binary_ext(x,y);
+      end
+      n_x = numel(x.values);
+      n_y = numel(y.values);
       x.values = x.values + y.values;
-      if numel(x) == numel(y)
+      if n_x == n_y
         x.derivatives = x.derivatives + y.derivatives;
-      elseif (numel(x) == 1) || (numel(y) == 1)
+      elseif (n_x == 1) || (n_y == 1)
         x.derivatives = bsxfun(@plus, x.derivatives, y.derivatives);
       else
         error('Implicit Expansion is not supported yet!');
       end
     else
-      if numel(y) > 1 && numel(x) == 1
+      if numel(y) > 1 && numel(x.values) == 1
         x.derivatives = repmat(x.derivatives, numel(y), 1);
       end
       x.values = x.values + y;
     end
   else
+    if numel(y) == 1 && numel(x) > 1
+      y.derivatives = repmat(y.derivatives, numel(x), 1);
+    end
     y.values = x + y.values;
     x = y;
   end
